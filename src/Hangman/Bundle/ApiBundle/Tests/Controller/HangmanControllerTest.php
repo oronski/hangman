@@ -7,19 +7,19 @@ use Hangman\Bundle\ApiBundle\Entity\Game;
 
 class HangmanControllerTest extends WebTestCase
 {
-    
+
     private $client;
-    
+
     private $orm;
-    
+
     public function setUp()
     {
         $this->client = static::createClient();
         $this->client->followRedirects();
-        
+
         $this->orm = $this->getContainer()->get('doctrine');
     }
-    
+
     public function testSuccess () {
       $gameId = $this->assertCreate();
       $this->assertWin($gameId);
@@ -32,13 +32,13 @@ class HangmanControllerTest extends WebTestCase
       $response = $this->putRequest("nosuchid", "x");
       $this->assertEquals(404, $response->getStatusCode());
     }
-    
+
     public function testHttpBadReuest () {
       $gameId = $this->assertCreate();
       $response = $this->putRequest($gameId, "xxx");
       $this->assertEquals(400, $response->getStatusCode());
     }
-    
+
     private function assertCreate()
     {
         $this->client->request('POST', '/games');
@@ -48,7 +48,34 @@ class HangmanControllerTest extends WebTestCase
         $this->assertEquals(Game::STATUS_BUSY, $json->game->status);
         return $json->game->id;
     }
-    
+
+    private function asserPostCorrecResponse()
+    {
+        $response = $this->postRequest();
+        $this->assertEquals(201, $response->getStatusCode());
+        $json = $this->fetchJson($response);
+        $this->assertEquals(Game::STATUS_BUSY, $json->game->status);
+        $this->assertObjectHasAttribute("game", $json);
+        $this->assertObjectHasAttribute("tries_left", $json->game);
+        $this->assertObjectHasAttribute("word", $json->game);
+        $this->assertObjectHasAttribute("status", $json->game);
+    }
+
+    private function assertPutCorrecResponse()
+    {
+        $game = $this->orm->getRepository('HangmanApiBundle:Game')
+          ->find($gameId);
+        $word = $game->getWord();
+        $response = $this->putRequest($gameId, "a");
+        $this->assertEquals(200, $response->getStatusCode());
+        $json = $this->fetchJson($response);
+        $this->assertEquals(Game::STATUS_BUSY, $json->game->status);
+        $this->assertObjectHasAttribute("game", $json);
+        $this->assertObjectHasAttribute("tries_left", $json->game);
+        $this->assertObjectHasAttribute("word", $json->game);
+        $this->assertObjectHasAttribute("status", $json->game);
+    }
+
     private function assertWin ($gameId) {
       $game = $this->orm->getRepository('HangmanApiBundle:Game')
         ->find($gameId);
@@ -64,7 +91,7 @@ class HangmanControllerTest extends WebTestCase
         }
       }
     }
-    
+
     private function assertLoose ($gameId) {
       $game = $this->orm->getRepository('HangmanApiBundle:Game')
         ->find($gameId);
@@ -81,14 +108,20 @@ class HangmanControllerTest extends WebTestCase
         }
       }
     }
-    
+
     private function putRequest ($gameId, $char) {
       $this->client->request('PUT', '/games/' . $gameId . "?char=".$char);
       $response = $this->client->getResponse();
       return $response;
     }
-    
-    
+
+    private function postRequest ($gameId, $char) {
+      $this->client->request('POST', '/games');
+      $response = $this->client->getResponse();
+      return $response;
+    }
+
+
     private function fetchJson($response) {
         $content = $response->getContent();
         $json = json_decode($content);
