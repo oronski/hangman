@@ -27,7 +27,7 @@ class HangmanGame {
     public function create() {
 
         $word = $this->word->getRandomWord();
-
+        
         $game = new Game();
         $game->setTriesLeft(self::MAX_TRIES);
         $game->setWord($word);
