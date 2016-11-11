@@ -1,5 +1,10 @@
 services:
+  hangman.word:
+    class: Hangman\Bundle\ApiBundle\Service\HangmanWord
+    arguments:
+      - @doctrine.orm.default_entity_manager
   hangman.game:
     class: Hangman\Bundle\ApiBundle\Service\HangmanGame
     arguments:
       - @doctrine.orm.default_entity_manager
+      - @hangman.word

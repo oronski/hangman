@@ -16,8 +16,9 @@ class HangmanGame {
     /**
      * @param EntityManager $entityManager
      */
-    public function __construct(EntityManager $entityManager) {
+    public function __construct(EntityManager $entityManager, HangmanWord $word) {
         $this->entityManager = $entityManager;
+        $this->word = $word;
     }
 
     /**
@@ -25,21 +26,11 @@ class HangmanGame {
      */
     public function create() {
 
-        $max = $this->entityManager->createQuery('
-            SELECT MAX(w.id) FROM HangmanApiBundle:Word w
-            ')->getSingleScalarResult();
-
-        $randomWord = $this->entityManager->createQuery('
-            SELECT w FROM HangmanApiBundle:Word w 
-            WHERE w.id >= :rand
-            ORDER BY w.id ASC
-            ')->setParameter('rand', rand(0, $max))
-                ->setMaxResults(1)
-                ->getSingleResult();
+        $word = $this->word->getRandomWord();
 
         $game = new Game();
         $game->setTriesLeft(self::MAX_TRIES);
-        $game->setWord($randomWord->getWord());
+        $game->setWord($word);
         $game->setStatus(Game::STATUS_BUSY);
         $this->entityManager->persist($game);
         $this->entityManager->flush();
