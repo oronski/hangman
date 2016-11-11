@@ -1,0 +1,5 @@
+services:
+  hangman.game:
+    class: Hangman\Bundle\ApiBundle\Service\HangmanGame
+    arguments:
+      - @doctrine.orm.default_entity_manager

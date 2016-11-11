@@ -1,0 +1,53 @@
+<?php
+
+namespace Hangman\Bundle\ApiBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Game
+ *
+ * @ORM\Table(name="game")
+ * @ORM\Entity
+ */
+class Game
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="tries_left", type="integer", nullable=false)
+     */
+    private $triesLeft;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="word", type="string", length=255, nullable=false)
+     */
+    private $word;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="status", type="string", length=255, nullable=false)
+     */
+    private $status;
+
+    /**
+     * @var jsonarray
+     *
+     * @ORM\Column(name="characters_guessed", type="jsonarray", nullable=false)
+     */
+    private $charactersGuessed;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+
+}

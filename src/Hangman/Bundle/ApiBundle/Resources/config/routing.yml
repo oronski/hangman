@@ -1,0 +1,12 @@
+hangman_api_hello_world:
+    path:     /hello/world
+    defaults: { _controller: HangmanApiBundle:HelloWorld:helloWorld, _format:json }
+    methods:  [GET]
+hangman_api_games_guess:
+    path:     /games/{id}
+    defaults: { _controller: HangmanApiBundle:Game:guess, _format:json }
+    methods:  [PUT]
+hangman_api_games_create:
+    path:     /games
+    defaults: { _controller: HangmanApiBundle:Game:create, _format:json }
+    methods:  [POST]
