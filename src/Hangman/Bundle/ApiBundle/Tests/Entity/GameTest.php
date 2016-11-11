@@ -8,6 +8,8 @@ class GameTest extends \PHPUnit_Framework_TestCase {
 
     private $word = "hangman";
 
+    private $tries = 11;
+
     public function testCharOutOfRange() {
         $game = new Game();
         $game->setWord($this->word);
@@ -40,31 +42,29 @@ class GameTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals(++$i, count($game->getCharactersGuessed()));
         }
     }
-    
+
     public function testKeepTriesLeft() {
-        $triesLeft = 11;
         $game = new Game();
         $game->setWord($this->word);
-        $game->setTriesLeft($triesLeft);
+        $game->setTriesLeft($this->tries);
         $this->assertEquals($this->word, $game->getWord());
         $chars = array("h","m","n");
         foreach ($chars as $char) {
             $game->guess($char);
-            $this->assertEquals($triesLeft, $game->getTriesLeft());
+            $this->assertEquals($this->tries, $game->getTriesLeft());
         }
     }
-    
+
     public function testDecrementTriesLeft() {
-        $triesLeft = 11;
         $game = new Game();
         $game->setWord($this->word);
-        $game->setTriesLeft($triesLeft);
+        $game->setTriesLeft($this->tries);
         $this->assertEquals($this->word, $game->getWord());
         $chars = array("x","y","z","f");
         $i = 1;
         foreach ($chars as $char) {
             $game->guess($char);
-            $this->assertEquals($triesLeft - $i++, $game->getTriesLeft());
+            $this->assertEquals($this->tries - $i++, $game->getTriesLeft());
         }
     }
 
